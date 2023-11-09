@@ -7,24 +7,24 @@ public class Event implements Comparable<Event> {
 	private String location;
 	private char status;
 
-	public Event(String title, Contact contact, String date, String time, String location,char status) {
+	public Event(String title, Contact contact, String date, String time, String location, char status) {
 		this.title = title;
 		this.contacts = new LinkedList<>();
 		addContact(contact);
 		this.date = date;
 		this.time = time;
 		this.location = location;
-		this.status = status;//check status in schedule E or A
+		this.status = status;// check status in schedule E or A
 	}
 
 	public void addContact(Contact contact) {
-		if(status == 'E' || status=='e')
-		contacts.insert(contact);
-		else if( status=='A' || status == 'a') {
-			if(contacts == null)
+		if (status == 'E' || status == 'e')
+			contacts.insert(contact);
+		else if (status == 'A' || status == 'a') {
+			if (contacts == null)
 				contacts.insert(contact);
 			else
-				System.out.println("You already have appointment with: "+toString());
+				System.out.println("You already have appointment with: " + toString());
 		}
 	}
 
@@ -34,9 +34,25 @@ public class Event implements Comparable<Event> {
 		for (int i = 0; i < contacts.length(); i++) {
 			if (contacts.retrieve().getName().equals(name))
 				return true;
-			contacts.findfirst();
+			contacts.findnext();
 		}
 		return false;
+	}
+
+	// delete contact from event
+	public boolean deleteContact(Contact contact) {
+		if (status == 'E' || status == 'e')
+			if (contacts.empty())
+				return false;
+			else if (checkContactName(contact.getName())) {
+				contacts.delete(contact);
+				return true;
+			}
+		return false;
+	}
+
+	public boolean isAppointmen() {
+		return status == 'A' || status == 'a';
 	}
 
 	@Override
@@ -76,5 +92,8 @@ public class Event implements Comparable<Event> {
 		return location;
 	}
 
-}
+	public LinkedList<Contact> getContacts() {
+		return contacts;
+	}
 
+}
