@@ -1,3 +1,6 @@
+package csc212;
+
+import java.util.Scanner;
 
 public class Phonebook {
 	public static BST<Contact> contactTree = new BST<Contact>();
@@ -92,7 +95,7 @@ public class Phonebook {
 				break;
 
 			default:
-				System.out.println("Wrong input! reEnter");
+				System.out.println("Wrong input! reEnter" + "\n");
 
 			}
 		} while (choice != 8);
@@ -333,71 +336,141 @@ public class Phonebook {
 		System.out.println("");
 
 		String title, name, date, time, location;
-
-		System.out.print("Enter event title:");
-		title = input.nextLine();
-
-		System.out.print("Enter contact name:");
-		name = input.nextLine();
-
-		System.out.print("Enter event date and time (MM/DD/YYYY HH:MM):");
-		date = input.next();
-		time = input.nextLine();
-
-		System.out.print("Enter event location:");
-		location = input.nextLine();
-
-		BST<Contact> CheckContact = contactTree.searchContactByInformation(name);
-
-		// check if contact exist
-		if (!CheckContact.empty()) {
-
-			Contact contact = CheckContact.retrieve();
-
+		
 			switch (searchChoice) {
 			case 1:
-				Event event = new Event(title, contact, date, time, location, 'E');
+				
+				System.out.print("Enter event title:");
+				title = input.nextLine();
 
-				// check if event has contradiction
-				boolean check1 = true;
-				eventList.findfirst();
-				for (int i = 0; i < eventList.length(); i++) {
-					if (eventList.retrieve().getTime().equals(time) && eventList.retrieve().getDate().equals(date)) {
-						check1 = false;
-						return;
+				System.out.print("Enter contacts name separated by a comma:");
+				name = input.nextLine();
+
+				System.out.print("Enter event date and time (MM/DD/YYYY HH:MM):");
+				date = input.next();
+				time = input.nextLine();
+
+				System.out.print("Enter event location:");
+				location = input.nextLine();
+				
+				//substring names and but it in list
+				LinkedList<String> contactsNames = new LinkedList<String>();
+				
+				int start = 0;
+				
+				for(int i=0 ; i < name.length() ;i++) {
+					if(name.charAt(i) == ',') {
+						String name2 = name.substring(start, i);
+						contactsNames.insert(name2);
+						start = i+1;
 					}
-					eventList.findnext();
 				}
-
-				if (check1) {
-					event.addContact(contact);
-					contact.addEvent(event);
-					eventList.insert(event);
-					System.out.println("");
-					System.out.println("Event scheduled successfully!");
-					System.out.println("");
-				} else {
-					System.out.println("");
-					System.out.println("Event contradiction!");
-					System.out.println("");
+				//substring name that does not have ',' next to it
+				String lastName = name.substring(start);
+				
+				contactsNames.insert(lastName);
+				
+				
+				//check if contact/s exist------------------------if(!contactsNames.empty())?
+				boolean check = true;
+				contactsNames.findfirst();
+				for(int i=0 ; i < contactsNames.length() ; i++) {
+					BST<Contact> CheckContact = contactTree.searchContactByInformation(contactsNames.retrieve());
+					if(CheckContact.empty()) {
+						System.out.println("");
+						System.out.println("Contact: "+ contactsNames.retrieve().toString() +" doesn't exist!");///toString right?
+						System.out.println("");
+						check = false;
+					}
+					contactsNames.findnext();
 				}
+				
+				//when contact exist check event
+				if(check) {
+					
+					// check if event has contradiction
+					boolean checkEvent = true;
+					eventList.findfirst();
+					for (int i = 0; i < eventList.length(); i++) {
+						if (eventList.retrieve().getTime().equals(time) && eventList.retrieve().getDate().equals(date)) {
+							checkEvent = false;
+							return;
+						}
+						eventList.findnext();
+					}
+					
+					//when there is no contradiction schedule event
+					if(checkEvent) {
+						
+						Event event = new Event(title, date, time, location, 'E');
 
+						contactsNames.findfirst();
+						for(int i=0 ; i < contactsNames.length() ; i++) {
+							BST<Contact> CheckContact = contactTree.searchContactByInformation(contactsNames.retrieve());
+							Contact contact = CheckContact.retrieve();
+							event.addContact(contact);
+							contact.addEvent(event);
+							eventList.insert(event);
+							contactsNames.findnext();
+						}
+
+						System.out.println("");
+						System.out.println("Event scheduled successfully!");
+						System.out.println("");
+					}else {
+						System.out.println("");
+						System.out.println("Event contardiction!");
+						System.out.println("");
+					}
+					
+				}
+//					else {
+//					System.out.println("");
+//					System.out.println("Contact doesn't exist!");
+//					System.out.println("");
+//				}
+
+					
 				break;
 			case 2:
-				Event appointment = new Event(title, contact, date, time, location, 'A');
+				
+
+
+				System.out.print("Enter event title:");
+				title = input.nextLine();
+
+				System.out.print("Enter contact name:");
+				name = input.nextLine();
+
+				System.out.print("Enter event date and time (MM/DD/YYYY HH:MM):");
+				date = input.next();
+				time = input.nextLine();
+
+				System.out.print("Enter event location:");
+				location = input.nextLine();
+
+				BST<Contact> CheckContact = contactTree.searchContactByInformation(name);
+
+				// check if contact exist
+				if (!CheckContact.empty()) {
+
+					Contact contact = CheckContact.retrieve();
+
+				Event appointment = new Event(title, date, time, location, 'A');
+				appointment.addContact(contact);
 
 				// check if appointment has contradiction
-				boolean check2 = true;
+				boolean checkAppointment = true;
 				eventList.findfirst();
 				for (int i = 0; i < eventList.length(); i++) {
 					if (eventList.retrieve().getTime().equals(time) && eventList.retrieve().getDate().equals(date)) {
-						check2 = false;
+						checkAppointment = false;
 						return;
 					}
 					eventList.findnext();
 				}
 
-				if (check2) {
+				if (checkAppointment) {
 					appointment.addContact(contact);
 					contact.addEvent(appointment);
 					eventList.insert(appointment);
@@ -409,16 +482,16 @@ public class Phonebook {
 					System.out.println("Appointment contradiction!");
 					System.out.println("");
 				}
+				} else {
+					System.out.println("");
+					System.out.println("Contact doesn't exist!");
+					System.out.println("");
+				}
 				break;
 
 			default:
 				System.out.println("Invalid Input!");
 			}
-		} else {
-			System.out.println("");
-			System.out.println("Contact doesn't exist!");
-			System.out.println("");
-		}
 	}
 
 	public static void printSearchedEvent(String info) {
