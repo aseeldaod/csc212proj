@@ -7,10 +7,9 @@ public class Event implements Comparable<Event> {
 	private String location;
 	private char status;
 
-	public Event(String title, Contact contact, String date, String time, String location, char status) {
+	public Event(String title, String date, String time, String location, char status) {
 		this.title = title;
 		this.contacts = new LinkedList<>();
-		addContact(contact);
 		this.date = date;
 		this.time = time;
 		this.location = location;
@@ -18,14 +17,7 @@ public class Event implements Comparable<Event> {
 	}
 
 	public void addContact(Contact contact) {
-		if (status == 'E' || status == 'e')
 			contacts.insert(contact);
-		else if (status == 'A' || status == 'a') {
-			if (contacts == null)
-				contacts.insert(contact);
-			else
-				System.out.println("You already have appointment with: " + toString());
-		}
 	}
 
 	// check if contact in event or not
@@ -66,10 +58,11 @@ public class Event implements Comparable<Event> {
 
 		// loop for printing all contacts name in event
 		contacts.findfirst();
-		for (int i = 0; i < contacts.length(); i++) {
-			string += contacts.retrieve().getName() + " ";
+		for (int i = 0; i < contacts.length()-1; i++) {
+			string += contacts.retrieve().getName() + " ,";
 			contacts.findnext();
 		}
+		string += contacts.retrieve().getName();
 
 		string += "\nEvent date and time (MM/DD/YYYY HH:MM): " + date + time + "\nEvent location: " + location + "\n";
 
