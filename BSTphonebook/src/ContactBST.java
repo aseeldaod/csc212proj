@@ -95,10 +95,10 @@ public class BST<K extends Comparable<K>> {
 			return false;
 		while (p != null) {
 			q = p;
-			if (p.getKey().compareTo(k) == 0) {
+			if (k.compareTo(p.getKey()) == 0) {
 				current = p;
 				return true;
-			} else if (p.getKey().compareTo(k) < 0)
+			} else if (k.compareTo(p.getKey()) < 0)
 				p = p.getLeft();
 			else
 				p = p.getRight();
